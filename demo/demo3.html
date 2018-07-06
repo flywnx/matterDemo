@@ -24,35 +24,35 @@
 
 </body>
 <script>
-   // 初始化定义
-    // 引擎
-    let Engine = Matter.Engine,
-      // 渲染
-      Render = Matter.Render,
-      // 运动
-      Runner = Matter.Runner,
-      // 鼠标约束
-      MouseConstraint = Matter.MouseConstraint,
-      // 鼠标
-      Mouse = Matter.Mouse,
-      // 世界
-      World = Matter.World,
-      // 主体配置
-      Bodies = Matter.Bodies,
-      // 操纵体模型
-      Body = Matter.Body,
-      // 复合材料
-      Composites = Matter.Composites,
-      // 约束
-      Constraint = Matter.Constraint,
-      // 事件
-      Events = Matter.Events,
-      // 向量
-      Vector = Matter.Vector
+  // 初始化定义
+  // 引擎
+  let Engine = Matter.Engine,
+    // 渲染
+    Render = Matter.Render,
+    // 运动
+    Runner = Matter.Runner,
+    // 鼠标约束
+    MouseConstraint = Matter.MouseConstraint,
+    // 鼠标
+    Mouse = Matter.Mouse,
+    // 世界
+    World = Matter.World,
+    // 主体配置
+    Bodies = Matter.Bodies,
+    // 操纵体模型
+    Body = Matter.Body,
+    // 复合材料
+    Composites = Matter.Composites,
+    // 约束
+    Constraint = Matter.Constraint,
+    // 事件
+    Events = Matter.Events,
+    // 向量
+    Vector = Matter.Vector
   function matter() {
     // 状态变量
     let firstCollision = 0
-   
+
 
     // 创建引擎,世界
     let engine = Engine.create(),
@@ -85,26 +85,34 @@
         category: 1,
       },
     });
-    // 刀柄
-    var Hilt1 = Bodies.rectangle(60, 445, 30, 10, {
-      id: 'Hilt1',
-    })
-    var Hilt2 = Bodies.rectangle(60, 430, 10, 20, {
+    // 刀竖柄
+    var Hilt2 = Bodies.rectangle(60, 420, 10, 20, {
       id: 'Hilt2',
     })
-    // 刀身
-    var knife = Bodies.rectangle(60, 490, 10, 80, {
-      id: 'knife',
+    // 刀横柄
+    var Hilt1 = Bodies.rectangle(60, 435, 30, 10, {
+      id: 'Hilt1',
     })
 
+    // 刀身
+    var knife = Bodies.rectangle(60, 480, 10, 80, {
+      id: 'knife',
+      stiffness: 1,
+    })
+    // 刀尖
+    var knife_tip = Bodies.rectangle(60, 525, 10, 10, {
+      id: 'knife_tip',
+      stiffness: 1,
+    })
     var knifeAll = Body.create({
       id: 'knifeAll',
-      parts: [Hilt1, Hilt2, knife],
+      parts: [Hilt1, Hilt2, knife,knife_tip],
       stiffness: 1,
       restitution: 0.3,
       collisionFilter: {
         category: 3,
-      }
+      },
+       isSleeping: true,
     });
 
 
@@ -138,7 +146,7 @@
       },
     });
     // 为世界添加物体
-    World.add(world, [knifeAll,tree, ground , target, pole]);
+    World.add(world, [knifeAll, tree, ground, target, pole]);
 
     // 初始化鼠标控制
     let mouse = Mouse.create(render.canvas),
@@ -155,7 +163,7 @@
 
     // 碰撞开始监听
     Events.on(engine, 'collisionStart', (event) => {
-      if (firstCollision>2) {
+      if (firstCollision > 2) {
         return
       }
       firstCollision++
@@ -170,7 +178,7 @@
           knifeAll.isSleeping = true
         }
       })
-      
+
 
 
 
@@ -204,12 +212,14 @@
 
   // console.log(matterObj.engine.world.bodies[0]);
   // console.log(document.getElementsByTagName(`canvas`));
-  document.getElementsByTagName(`canvas`)[0].onclick=()=>{
+  document.getElementsByTagName(`canvas`)[0].onclick = () => {
     console.log(`画布被点击`);
-        // 设定角速度
-    Body.setAngularVelocity(matterObj.engine.world.bodies[0], 0.16);
+    matterObj.engine.world.bodies[0].isSleeping = false
+    // 设定角速度
+    Body.setAngularVelocity(matterObj.engine.world.bodies[0], 0.1);
     // 设置线速度   
-    Body.setVelocity(matterObj.engine.world.bodies[0], Vector.create(15, -12));
+    Body.setVelocity(matterObj.engine.world.bodies[0], Vector.create(15, -10));
+    document.getElementsByTagName(`canvas`)[0].onclick = null
   }
 
 
